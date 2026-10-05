@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的網頁程式作品集 | Portfolio Portal</title>
+    <!-- 引入 Google Fonts 優雅字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* 莫蘭迪/淡雅奶茶風格配色 (Muted Elegance Palette) */
+            --bg-gradient-1: #f7f4f0;
+            --bg-gradient-2: #eae3d9;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --primary-color: #8c7a6b;
+            --primary-hover: #736254;
+            --accent-color: #d4a373;
+            --text-main: #4a403a;
+            --text-muted: #8c827a;
+            --locked-bg: rgba(230, 226, 221, 0.6);
+            --locked-text: #a39b94;
+            --shadow-soft: 0 10px 30px rgba(140, 122, 107, 0.08);
+            --shadow-hover: 0 15px 35px rgba(140, 122, 107, 0.18);
+            --glow-color: rgba(212, 163, 115, 0.4);
+            --border-radius: 20px;
+            --transition-smooth: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--border-radius);
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 大頭貼邊框與柔光 */
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ffffff;
+            box-shadow: 0 8px 20px rgba(140, 122, 107, 0.15);
+            transition: var(--transition-smooth);
+        }
+
+        .avatar-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent-color), transparent, var(--primary-color));
+            z-index: -1;
+            opacity: 0.6;
+            filter: blur(8px);
+            transition: var(--transition-smooth);
+        }
+
+        .avatar-wrapper:hover .avatar {
+            transform: scale(1.05);
+        }
+
+        .avatar-wrapper:hover::after {
+            opacity: 0.9;
+            filter: blur(12px);
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .progress-section {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(140, 122, 107, 0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 12.5%; /* 2/16 = 12.5% */
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+            border-radius: 20px;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* 通用關卡按鈕卡片樣式 */
+        .level-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 22px 18px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            min-height: 120px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+        }
+
+        .level-card.unlocked {
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .level-card.unlocked::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+            transition: var(--transition-smooth);
+        }
+
+        /* 解鎖按鈕的懸停 (Hover) 特效：3D 浮動 + 光暈 + 邊框發光 */
+        .level-card.unlocked:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover), 0 0 20px var(--glow-color);
+            border-color: rgba(212, 163, 115, 0.5);
+        }
+
+        .level-card.unlocked:hover::before {
+            width: 8px;
+            background: var(--primary-color);
+        }
+
+        .level-card.unlocked:hover .level-title {
+            color: var(--primary-color);
+        }
+
+        .level-card.unlocked:hover .status-badge {
+            transform: scale(1.1);
+        }
+
+        .level-card.locked {
+            background: var(--locked-bg);
+            border-color: rgba(220, 215, 210, 0.5);
+            cursor: not-allowed;
+            user-select: none;
+            opacity: 0.85;
+        }
+
+        /* 鎖定按鈕懸停時輕微搖晃 (Shake) 動畫 */
+        .level-card.locked:hover {
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* 卡片內部元素樣式 */
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .level-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            font-size: 1.1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .level-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: var(--transition-smooth);
+            word-break: break-word;
+        }
+
+        .level-card.locked .level-title {
+            color: var(--locked-text);
+        }
+
+        .level-footer {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .level-card.locked .level-footer {
+            color: var(--locked-text);
+        }
+
+        /* 平板電腦 (Medium screens) */
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+        }
+
+        /* 小平板 / 大手機 (Small screens) */
+        @media (max-width: 650px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+            .hero-card {
+                padding: 30px 20px;
+            }
+            .profile-name {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* 極小手機螢幕 (Extra small screens) */
+        @media (max-width: 400px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="hero-card">
+            <!-- 大頭貼區域 -->
+            <div class="avatar-wrapper">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="個人大頭貼" class="avatar">
+            </div>
+            
+            <!-- 個人姓名與標題 -->
+            <h1 class="profile-name">我的網頁程式作品集</h1>
+            <p class="profile-subtitle">網頁前端開發闖關歷程 ✦ Web Development Journey</p>
+
+            <!-- 闖關進度條 -->
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span>關卡解鎖進度</span>
+                    <span>2 / 16 (12.5%)</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="grid-container">
+            
+            <!-- 按鈕 1：已解鎖 -->
+            <a href="w1/index.html" class="level-card unlocked">
+                <div class="level-header">
+                    <span class="level-number">WEEK 01</span>
+                    <span class="status-badge" title="已解鎖">⭐</span>
+                </div>
+                <div class="level-title">Week 1 - 數位名片</div>
+                <div class="level-footer">
+                    <span>點擊進入關卡 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- 按鈕 2：已解鎖 -->
+            <a href="w2/index.html" class="level-card unlocked">
+                <div class="level-header">
+                    <span class="level-number">WEEK 02</span>
+                    <span class="status-badge" title="已解鎖">✨</span>
+                </div>
+                <div class="level-title">Week 2 - 今天吃甚麼?</div>
+                <div class="level-footer">
+                    <span>點擊進入關卡 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- 按鈕 3 ~ 16：未解鎖鎖定狀態 -->
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 03</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 3 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 04</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 4 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 05</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 5 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 06</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 6 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 07</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 7 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 08</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 8 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 09</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 9 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 10</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 10 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 11</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 11 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 12</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 12 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 13</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 13 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 14</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 14 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 15</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 15 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+            <div class="level-card locked" onclick="event.preventDefault();">
+                <div class="level-header">
+                    <span class="level-number">WEEK 16</span>
+                    <span class="status-badge">🔒</span>
+                </div>
+                <div class="level-title">Week 16 - 尚未開放</div>
+                <div class="level-footer">
+                    <span>未解鎖關卡</span>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>歐式典雅動態留言板</title>
+  
+  <!-- 引入 Google Fonts 歐式古典標題字體與繁體中文襯線體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       【主題色彩與參數變數設定】
+       如需調整顏色或輪播速度，請直接修改下方 :root 內的數值
+       ========================================================================== */
+    :root {
+      /* 色彩系統 (歐式暗黑奢華與香檳金) */
+      --bg-color: #12100e;           /* 網頁背景底色 (深沉古典黑褐色) */
+      --card-bg: #1e1915;            /* 卡片背景色 (古典羊皮暗色調) */
+      --text-gold: #e5c158;          /* 標題與重點香檳金色 */
+      --text-main: #eae3d9;          /* 主要內文顏色 (羊皮紙米白) */
+      --text-muted: #9e8e7c;         /* 時間與次要文字顏色 */
+      --card-border: #4a3b2c;        /* 常態卡片細邊框色 */
+
+      /* 輪播高亮 (Highlight) 特效顏色 */
+      --highlight-border: #ffd700;   /* 高亮卡片的邊框金光色 */
+      --highlight-glow: rgba(255, 215, 0, 0.4); /* 高亮卡片外發光暈感 */
+
+      /* 輪播時間控制 */
+      --carousel-speed: 3000ms;      /* 每隔幾毫秒切換下一張卡片 (3000ms = 3 秒) */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Noto Serif TC', serif, Georgia, 'Times New Roman';
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem;
+      /* 背景畫布加上漸層與古典微紋質感 */
+      background-image: radial-gradient(circle at 50% 20%, #292019 0%, #12100e 80%);
+    }
+
+    /* 頁面標題區塊 */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-family: 'Cinzel', 'Noto Serif TC', serif;
+      color: var(--text-gold);
+      font-size: 2.4rem;
+      letter-spacing: 3px;
+      margin-bottom: 0.6rem;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-style: italic;
+      letter-spacing: 1px;
+    }
+
+    /* 歐式古典花紋裝飾分隔線 */
+    .ornament-line {
+      width: 140px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--text-gold), transparent);
+      margin: 0.8rem auto;
+    }
+
+    /* ==========================================================================
+       【載入中特效 (Loading Animation)】
+       ========================================================================== */
+    #loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 1rem;
+    }
+
+    .loader-ring {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--card-border);
+      border-top: 2px solid var(--text-gold);
+      border-bottom: 2px solid var(--text-gold);
+      border-radius: 50%;
+      animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+      box-shadow: 0 0 20px rgba(229, 193, 88, 0.2);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .loading-text {
+      margin-top: 1.5rem;
+      color: var(--text-gold);
+      font-family: 'Cinzel', 'Noto Serif TC', serif;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      animation: pulse 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ==========================================================================
+       【瀑布流排版 (Masonry Layout)】
+       ========================================================================== */
+    .masonry-container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      
+      /* 使用 CSS 多欄位實現高低錯落瀑布流 */
+      column-count: 3;             /* 電腦版 3 欄 */
+      column-gap: 1.8rem;          /* 欄位間距 */
+    }
+
+    /* 響應式螢幕斷點 */
+    @media (max-width: 960px) {
+      .masonry-container {
+        column-count: 2;          /* 平板螢幕 2 欄 */
+      }
+    }
+    @media (max-width: 600px) {
+      .masonry-container {
+        column-count: 1;          /* 手機螢幕 1 欄 */
+      }
+    }
+
+    /* ==========================================================================
+       【卡片基礎樣式與過渡特效】
+       ========================================================================== */
+    .card {
+      break-inside: avoid;        /* 防止卡片在跨欄時被截斷 */
+      margin-bottom: 1.8rem;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 1.6rem;
+      border-radius: 4px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+      position: relative;
+      
+      /* 淡出暗化平滑動畫 */
+      transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      opacity: 0.7;
+      filter: blur(0.6px);
+    }
+
+    /* 卡片內層歐式雙細邊框點綴 */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 6px; left: 6px; right: 6px; bottom: 6px;
+      border: 1px dashed rgba(158, 142, 124, 0.25);
+      pointer-events: none;
+      transition: border-color 0.6s ease;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed rgba(229, 193, 88, 0.25);
+      padding-bottom: 0.5rem;
+    }
+
+    .card-author {
+      font-weight: 600;
+      color: var(--text-gold);
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+    }
+
+    .card-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .card-body {
+      font-size: 0.98rem;
+      line-height: 1.7;
+      color: var(--text-main);
+      word-break: break-word;
+      white-space: pre-wrap;      /* 保留原留言內容中的換行格式 */
+    }
+
+    /* --------------------------------------------------------------------------
+       【輪播 Highlight 焦點亮起狀態】
+       -------------------------------------------------------------------------- */
+    .card.highlight {
+      opacity: 1;
+      filter: blur(0px);
+      transform: scale(1.05);     /* 卡片稍微放大 */
+      z-index: 10;
+      border-color: var(--highlight-border);
+      box-shadow: 0 10px 30px var(--highlight-glow);
+    }
+
+    .card.highlight::before {
+      border-color: rgba(255, 215, 0, 0.6);
+    }
+
+    /* 當有卡片高亮時，使其餘卡片稍微變暗變模糊 */
+    .masonry-container.has-highlight .card:not(.highlight) {
+      opacity: 0.4;
+      filter: blur(1px);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>GUESTBOOK</h1>
+    <div class="ornament-line"></div>
+    <p>歐式動態留言牆 — 聆聽來自好友的文字珍藏</p>
+  </header>
+
+  <!-- 讀取中酷炫動畫 -->
+  <div id="loading">
+    <div class="loader-ring"></div>
+    <div class="loading-text">讀取留言中...</div>
+  </div>
+
+  <!-- 瀑布流卡片展示牆容器 -->
+  <div id="board" class="masonry-container"></div>
+
+  <script>
+    // ==========================================================================
+    // 【資料來源與全域設定】
+    // ==========================================================================
+    
+    // Google 試算表發佈之 CSV 最新網址
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQnOtyfSO1ZMl8xoOMeGqtr5QsuNwbQbsnq8_f5ziJfkxB19CVXbnyGnsTIWmxxmD9Tlqg9O_dL7oI6/pub?output=csv';
+
+    // 控制動態輪播秒數：預設為 3000 毫秒 (即 3 秒)
+    const CAROUSEL_INTERVAL_MS = 3000;
+
+    let currentIndex = 0;       // 當前高亮的留言卡片索引
+    let carouselTimer = null;   // 輪播計時器
+
+    // ==========================================================================
+    // 【CSV 解析器 (精確處理雙引號、逗號與換行符號)】
+    // ==========================================================================
+    function parseCSV(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentCell = '';
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            currentCell += '"';  // 處理轉義雙引號
+            i++;
+          } else {
+            insideQuotes = !insideQuotes; // 切換雙引號包裹狀態
+          }
+        } else if (char === ',' && !insideQuotes) {
+          currentRow.push(currentCell.trim());
+          currentCell = '';
+        } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+          if (char === '\r' && nextChar === '\n') {
+            i++; // 跨過 Windows 風格的 \r\n
+          }
+          currentRow.push(currentCell.trim());
+          if (currentRow.length > 1 || currentRow[0] !== '') {
+            rows.push(currentRow);
+          }
+          currentRow = [];
+          currentCell = '';
+        } else {
+          currentCell += char;
+        }
+      }
+
+      if (currentCell || currentRow.length > 0) {
+        currentRow.push(currentCell.trim());
+        rows.push(currentRow);
+      }
+
+      return rows;
+    }
+
+    // ==========================================================================
+    // 【資料 fetch 讀取與動態生成卡片】
+    // ==========================================================================
+    async function fetchAndRenderMessages() {
+      const loadingEl = document.getElementById('loading');
+      const boardEl = document.getElementById('board');
+
+      try {
+        const response = await fetch(CSV_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP 錯誤! 狀態碼: ${response.status}`);
+        }
+
+        const csvText = await response.text();
+        const parsedData = parseCSV(csvText);
+
+        // 去除第一行 CSV 標頭資訊 (時間戳記, 名字, 悄悄話)
+        const dataRows = parsedData.slice(1);
+
+        // 載入完成，隱藏動畫
+        loadingEl.style.display = 'none';
+
+        if (dataRows.length === 0) {
+          boardEl.innerHTML = '<p style="text-align:center; grid-column:1/-1; color:var(--text-muted);">目前尚無留言。</p>';
+          return;
+        }
+
+        // 動態卡片生成
+        dataRows.forEach((row) => {
+          const time = row[0] || '未知時間';
+          const name = row[1] || '匿名好友';
+          const content = row[2] || '（無留言內容）';
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          
+          card.innerHTML = `
+            <div class="card-header">
+              <span class="card-author">${escapeHTML(name)}</span>
+              <span class="card-time">${escapeHTML(time)}</span>
+            </div>
+            <div class="card-body">${escapeHTML(content)}</div>
+          `;
+
+          boardEl.appendChild(card);
+        });
+
+        // 資料卡片渲染完成，開啟展覽輪播特效
+        startCarousel();
+
+      } catch (error) {
+        console.error('留言牆讀取失敗:', error);
+        loadingEl.innerHTML = `
+          <div style="color: #d9534f; text-align:center;">
+            <p>無法讀取留言資料</p>
+            <p style="font-size:0.85rem; margin-top:0.5rem; color:var(--text-muted);">請確認網路連線或 CSV 發佈連結設定。</p>
+          </div>
+        `;
+      }
+    }
+
+    // 防止 XSS 攻擊字元轉義處理
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // ==========================================================================
+    // 【輪播展覽 Highlight 特效】
+    // ==========================================================================
+    function startCarousel() {
+      const cards = document.querySelectorAll('.card');
+      const boardEl = document.getElementById('board');
+
+      if (cards.length === 0) return;
+
+      // 容器新增標記 class，觸發非高亮卡片變暗變模糊效果
+      boardEl.classList.add('has-highlight');
+
+      function updateHighlight() {
+        // 移除先前的亮起狀態
+        cards.forEach(card => card.classList.remove('highlight'));
+
+        // 當前卡片加上高亮發光樣式
+        const currentCard = cards[currentIndex];
+        currentCard.classList.add('highlight');
+
+        // 平滑自動滾動，確保高亮卡片位於可視區域內
+        currentCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // 輪播索引遞增，循環播放
+        currentIndex = (currentIndex + 1) % cards.length;
+      }
+
+      // 立即執行首次高亮
+      updateHighlight();
+
+      // 每隔設定的時間 (3 秒) 切換下一個留言
+      carouselTimer = setInterval(updateHighlight, CAROUSEL_INTERVAL_MS);
+    }
+
+    // 網頁準備完成後執行初始化
+    document.addEventListener('DOMContentLoaded', fetchAndRenderMessages);
+  </script>
+</body>
+</html>

@@ -1,99 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天吃什麼？隨機抽籤機</title>
+    <!-- 載入 Google 字型與 FontAwesome 圖示 -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 連結 CSS 樣式表 -->
+    <link rel="stylesheet" href="style.css">
+    <!-- 載入 JS 檔案 -->
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div class="card-container">
+        <!-- 裝飾可愛小元素 -->
+        <div class="decoration decoration-left">🍳</div>
+        <div class="decoration decoration-right">🍜</div>
+
+        <!-- 標題區域 -->
+        <h1 id="main-title" class="title">今天吃什麼？</h1>
+
+        <!-- 食物圖片與詳細資訊展示區 (初始隱藏) -->
+        <div id="result-card" class="result-card hidden">
+            <div class="image-wrapper">
+                <img id="food-image" src="" alt="美食圖片">
+            </div>
+            <a id="map-btn" href="#" target="_blank" rel="noopener noreferrer" class="map-button">
+                <i class="fa-solid fa-location-dot"></i> 馬上出發！
+            </a>
+        </div>
+
+        <!-- 抽籤按鈕 -->
+        <button id="draw-btn" class="draw-button">
+            <i class="fa-solid fa-dice"></i> 點我抽籤
+        </button>
+    </div>
+
+</body>
+</html>
+/* 全局樣式設定 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+    background: linear-gradient(135deg, #FFF6E5 0%, #FFE29F 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #4A3E3D;
+}
+
+/* 主卡片容器 */
+.card-container {
+    background-color: #FFFFFF;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 30px;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(255, 153, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    position: relative;
+    border: 4px solid #FFE082;
+}
+
+/* 可愛裝飾圖示 */
+.decoration {
+    position: absolute;
+    font-size: 2rem;
+    top: -20px;
+    animation: float 3s ease-in-out infinite alternate;
+}
+.decoration-left { left: 20px; animation-delay: 0s; }
+.decoration-right { right: 20px; animation-delay: 1.5s; }
+
+@keyframes float {
+    0% { transform: translateY(0) rotate(-10deg); }
+    100% { transform: translateY(-10px) rotate(10deg); }
+}
+
+/* 主標題 */
+.title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #FF8800;
+    margin-bottom: 25px;
+    min-height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    text-shadow: 2px 2px 0px #FFE082;
+}
+
+/* 隨機挑選時的生動彈跳動畫 (Bounce) */
+.bounce-animation {
+    animation: bounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounce {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.15); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 食物結果卡片 */
+.result-card {
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+}
+
+.result-card.hidden {
+    display: none;
+}
+
+.image-wrapper {
+    width: 100%;
+    height: 200px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    border: 3px solid #FFC107;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 馬上出發按鈕 (Google Maps) */
+.map-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.map-button:hover {
+    background-color: #43A047;
+    transform: translateY(-2px);
+}
+
+/* 主抽籤按鈕 */
+.draw-button {
+    width: 100%;
+    background: linear-gradient(135deg, #FF9800 0%, #FF5722 100%);
+    color: white;
+    border: none;
+    padding: 16px 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 87, 34, 0.35);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.draw-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(255, 87, 34, 0.45);
+}
+
+.draw-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
+}
+// 確保所有 HTML DOM 元素載入完畢後才執行程式碼，避免 null 錯誤
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 餐廳資料庫：包含名字、圖片網址、分類標籤與 Google Maps 搜尋連結
+    // 1. 食物資料庫 (包含名稱、線上照片連結、Google Maps 導航連結)
     const foodList = [
         {
             name: "鴨肉飯 🦆",
-            category: "古早味小吃",
-            image: "https://images.unsplash.com/photo-1514944288352-fffac99f0bdf?auto=format&fit=crop&w=700&q=80",
+            image: "https://images.unsplash.com/photo-1514944288352-fffac99f0bdf?auto=format&fit=crop&w=600&q=80",
             mapUrl: "https://www.google.com/maps/search/?api=1&query=鴨肉飯"
         },
         {
             name: "深水食堂 🍱",
-            category: "溫馨日式定食",
-            image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80",
+            image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
             mapUrl: "https://www.google.com/maps/search/?api=1&query=深水食堂"
         },
         {
             name: "THE-T-cafe ☕",
-            category: "輕食咖啡廳",
-            image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=700&q=80",
+            image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80",
             mapUrl: "https://www.google.com/maps/search/?api=1&query=THE-T-cafe"
         },
         {
             name: "栗の鍋 🍲",
-            category: "暖心小火鍋",
-            image: "https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=700&q=80",
+            image: "https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=600&q=80",
             mapUrl: "https://www.google.com/maps/search/?api=1&query=栗の鍋"
         },
         {
             name: "越南河粉 🍜",
-            category: "異國酸辣美食",
-            image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=700&q=80",
+            image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=600&q=80",
             mapUrl: "https://www.google.com/maps/search/?api=1&query=越南河粉"
         }
     ];
 
+    // 2. 取得 DOM 元素
     const mainTitle = document.getElementById('main-title');
     const drawBtn = document.getElementById('draw-btn');
     const resultCard = document.getElementById('result-card');
     const foodImage = document.getElementById('food-image');
-    const foodCategory = document.getElementById('food-category');
     const mapBtn = document.getElementById('map-btn');
-    const subTip = document.getElementById('sub-tip');
 
-    let isSpinning = false;
-
+    // 3. 綁定按鈕點擊事件
     drawBtn.addEventListener('click', () => {
-        if (isSpinning) return;
-        isSpinning = true;
+        // 從選單中隨機抽取一個
+        const randomIndex = Math.floor(Math.random() * foodList.length);
+        const selectedFood = foodList[randomIndex];
 
-        // 1. 禁用按鈕樣式，並顯示滾動動態效果
-        drawBtn.disabled = true;
-        drawBtn.style.opacity = '0.8';
-        drawBtn.querySelector('.btn-text').textContent = '抽籤中...';
+        // 移除先前的動畫類別（讓動畫每次點擊都能重複播放）
+        mainTitle.classList.remove('bounce-animation');
+        
+        // 觸發網頁重新繪製以重置動畫
+        void mainTitle.offsetWidth;
 
-        // 2. 移除動畫 class，準備觸發新動畫
-        mainTitle.classList.remove('bounce-pop');
+        // 更新標題內容為抽到的美食名稱
+        mainTitle.textContent = selectedFood.name;
 
-        // 3. 滾動文字效果 (快速切換文字增添抽籤期待感)
-        let counter = 0;
-        const spinInterval = setInterval(() => {
-            const tempIndex = Math.floor(Math.random() * foodList.length);
-            mainTitle.textContent = foodList[tempIndex].name;
-            counter++;
+        // 加上生動的彈跳動畫
+        mainTitle.classList.add('bounce-animation');
 
-            if (counter > 10) {
-                clearInterval(spinInterval);
+        // 更新照片與 Google 地圖連結
+        foodImage.src = selectedFood.image;
+        mapBtn.href = selectedFood.mapUrl;
 
-                // 4. 正式挑選最終美食
-                const finalIndex = Math.floor(Math.random() * foodList.length);
-                const selectedFood = foodList[finalIndex];
+        // 顯示照片與導航按鈕卡片
+        resultCard.classList.remove('hidden');
 
-                // 替換標題與觸發生動彈跳動畫
-                mainTitle.textContent = selectedFood.name;
-                void mainTitle.offsetWidth; // 強制重繪以重置 CSS 動畫
-                mainTitle.classList.add('bounce-pop');
-
-                // 5. 更新卡片照片、標籤與 Google Maps 連結
-                foodImage.src = selectedFood.image;
-                foodImage.alt = selectedFood.name;
-                foodCategory.textContent = selectedFood.category;
-                mapBtn.href = selectedFood.mapUrl;
-
-                // 6. 顯示結果卡片區
-                resultCard.classList.remove('hidden');
-
-                // 7. 恢復按鈕狀態並更改提示文字
-                drawBtn.disabled = false;
-                drawBtn.style.opacity = '1';
-                drawBtn.querySelector('.btn-icon').innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
-                drawBtn.querySelector('.btn-text').textContent = '再抽一次';
-                subTip.textContent = '🎉 抽到了！不滿意的話可以點擊「再抽一次」唷！';
-
-                isSpinning = false;
-            }
-        }, 80);
+        // 更新按鈕文字
+        drawBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> 再抽一次';
     });
 
 });

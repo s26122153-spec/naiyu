@@ -1,0 +1,99 @@
+document.addEventListener('DOMContentLoaded', () => {
+
+    // 餐廳資料庫：包含名字、圖片網址、分類標籤與 Google Maps 搜尋連結
+    const foodList = [
+        {
+            name: "鴨肉飯 🦆",
+            category: "古早味小吃",
+            image: "https://images.unsplash.com/photo-1514944288352-fffac99f0bdf?auto=format&fit=crop&w=700&q=80",
+            mapUrl: "https://www.google.com/maps/search/?api=1&query=鴨肉飯"
+        },
+        {
+            name: "深水食堂 🍱",
+            category: "溫馨日式定食",
+            image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80",
+            mapUrl: "https://www.google.com/maps/search/?api=1&query=深水食堂"
+        },
+        {
+            name: "THE-T-cafe ☕",
+            category: "輕食咖啡廳",
+            image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=700&q=80",
+            mapUrl: "https://www.google.com/maps/search/?api=1&query=THE-T-cafe"
+        },
+        {
+            name: "栗の鍋 🍲",
+            category: "暖心小火鍋",
+            image: "https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=700&q=80",
+            mapUrl: "https://www.google.com/maps/search/?api=1&query=栗の鍋"
+        },
+        {
+            name: "越南河粉 🍜",
+            category: "異國酸辣美食",
+            image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=700&q=80",
+            mapUrl: "https://www.google.com/maps/search/?api=1&query=越南河粉"
+        }
+    ];
+
+    const mainTitle = document.getElementById('main-title');
+    const drawBtn = document.getElementById('draw-btn');
+    const resultCard = document.getElementById('result-card');
+    const foodImage = document.getElementById('food-image');
+    const foodCategory = document.getElementById('food-category');
+    const mapBtn = document.getElementById('map-btn');
+    const subTip = document.getElementById('sub-tip');
+
+    let isSpinning = false;
+
+    drawBtn.addEventListener('click', () => {
+        if (isSpinning) return;
+        isSpinning = true;
+
+        // 1. 禁用按鈕樣式，並顯示滾動動態效果
+        drawBtn.disabled = true;
+        drawBtn.style.opacity = '0.8';
+        drawBtn.querySelector('.btn-text').textContent = '抽籤中...';
+
+        // 2. 移除動畫 class，準備觸發新動畫
+        mainTitle.classList.remove('bounce-pop');
+
+        // 3. 滾動文字效果 (快速切換文字增添抽籤期待感)
+        let counter = 0;
+        const spinInterval = setInterval(() => {
+            const tempIndex = Math.floor(Math.random() * foodList.length);
+            mainTitle.textContent = foodList[tempIndex].name;
+            counter++;
+
+            if (counter > 10) {
+                clearInterval(spinInterval);
+
+                // 4. 正式挑選最終美食
+                const finalIndex = Math.floor(Math.random() * foodList.length);
+                const selectedFood = foodList[finalIndex];
+
+                // 替換標題與觸發生動彈跳動畫
+                mainTitle.textContent = selectedFood.name;
+                void mainTitle.offsetWidth; // 強制重繪以重置 CSS 動畫
+                mainTitle.classList.add('bounce-pop');
+
+                // 5. 更新卡片照片、標籤與 Google Maps 連結
+                foodImage.src = selectedFood.image;
+                foodImage.alt = selectedFood.name;
+                foodCategory.textContent = selectedFood.category;
+                mapBtn.href = selectedFood.mapUrl;
+
+                // 6. 顯示結果卡片區
+                resultCard.classList.remove('hidden');
+
+                // 7. 恢復按鈕狀態並更改提示文字
+                drawBtn.disabled = false;
+                drawBtn.style.opacity = '1';
+                drawBtn.querySelector('.btn-icon').innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
+                drawBtn.querySelector('.btn-text').textContent = '再抽一次';
+                subTip.textContent = '🎉 抽到了！不滿意的話可以點擊「再抽一次」唷！';
+
+                isSpinning = false;
+            }
+        }, 80);
+    });
+
+});

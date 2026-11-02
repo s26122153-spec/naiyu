@@ -1,99 +1,203 @@
-document.addEventListener('DOMContentLoaded', () => {
-
-    // 餐廳資料庫：包含名字、圖片網址、分類標籤與 Google Maps 搜尋連結
-    const foodList = [
-        {
-            name: "鴨肉飯 🦆",
-            category: "古早味小吃",
-            image: "https://images.unsplash.com/photo-1514944288352-fffac99f0bdf?auto=format&fit=crop&w=700&q=80",
-            mapUrl: "https://www.google.com/maps/search/?api=1&query=鴨肉飯"
-        },
-        {
-            name: "深水食堂 🍱",
-            category: "溫馨日式定食",
-            image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80",
-            mapUrl: "https://www.google.com/maps/search/?api=1&query=深水食堂"
-        },
-        {
-            name: "THE-T-cafe ☕",
-            category: "輕食咖啡廳",
-            image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=700&q=80",
-            mapUrl: "https://www.google.com/maps/search/?api=1&query=THE-T-cafe"
-        },
-        {
-            name: "栗の鍋 🍲",
-            category: "暖心小火鍋",
-            image: "https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=700&q=80",
-            mapUrl: "https://www.google.com/maps/search/?api=1&query=栗の鍋"
-        },
-        {
-            name: "越南河粉 🍜",
-            category: "異國酸辣美食",
-            image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=700&q=80",
-            mapUrl: "https://www.google.com/maps/search/?api=1&query=越南河粉"
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天吃什麼？隨機抽籤機</title>
+    <style>
+        /* 全局樣式設定 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-    ];
 
-    const mainTitle = document.getElementById('main-title');
-    const drawBtn = document.getElementById('draw-btn');
-    const resultCard = document.getElementById('result-card');
-    const foodImage = document.getElementById('food-image');
-    const foodCategory = document.getElementById('food-category');
-    const mapBtn = document.getElementById('map-btn');
-    const subTip = document.getElementById('sub-tip');
+        body {
+            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background-color: #FFF9E6;
+            background-image: radial-gradient(#FFE0B2 15%, transparent 16%);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-    let isSpinning = false;
+        /* 主卡片容器 */
+        .card {
+            background-color: #FFFFFF;
+            border: 4px solid #FF9800;
+            border-radius: 28px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 12px 24px rgba(255, 152, 0, 0.15);
+        }
 
-    drawBtn.addEventListener('click', () => {
-        if (isSpinning) return;
-        isSpinning = true;
+        /* 標題樣式 */
+        .title {
+            color: #E65100;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            min-height: 2.6em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
+        }
 
-        // 1. 禁用按鈕樣式，並顯示滾動動態效果
-        drawBtn.disabled = true;
-        drawBtn.style.opacity = '0.8';
-        drawBtn.querySelector('.btn-text').textContent = '抽籤中...';
+        /* 動畫效果：生動彈跳 */
+        .bounce {
+            animation: popBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        // 2. 移除動畫 class，準備觸發新動畫
-        mainTitle.classList.remove('bounce-pop');
-
-        // 3. 滾動文字效果 (快速切換文字增添抽籤期待感)
-        let counter = 0;
-        const spinInterval = setInterval(() => {
-            const tempIndex = Math.floor(Math.random() * foodList.length);
-            mainTitle.textContent = foodList[tempIndex].name;
-            counter++;
-
-            if (counter > 10) {
-                clearInterval(spinInterval);
-
-                // 4. 正式挑選最終美食
-                const finalIndex = Math.floor(Math.random() * foodList.length);
-                const selectedFood = foodList[finalIndex];
-
-                // 替換標題與觸發生動彈跳動畫
-                mainTitle.textContent = selectedFood.name;
-                void mainTitle.offsetWidth; // 強制重繪以重置 CSS 動畫
-                mainTitle.classList.add('bounce-pop');
-
-                // 5. 更新卡片照片、標籤與 Google Maps 連結
-                foodImage.src = selectedFood.image;
-                foodImage.alt = selectedFood.name;
-                foodCategory.textContent = selectedFood.category;
-                mapBtn.href = selectedFood.mapUrl;
-
-                // 6. 顯示結果卡片區
-                resultCard.classList.remove('hidden');
-
-                // 7. 恢復按鈕狀態並更改提示文字
-                drawBtn.disabled = false;
-                drawBtn.style.opacity = '1';
-                drawBtn.querySelector('.btn-icon').innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
-                drawBtn.querySelector('.btn-text').textContent = '再抽一次';
-                subTip.textContent = '🎉 抽到了！不滿意的話可以點擊「再抽一次」唷！';
-
-                isSpinning = false;
+        @keyframes popBounce {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
             }
-        }, 80);
-    });
+            50% {
+                transform: scale(1.15);
+            }
+            70% {
+                transform: scale(0.95);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
 
-});
+        /* 隱藏元素標籤 */
+        .hidden {
+            display: none !important;
+        }
+
+        /* 結果展示區（圖片與地圖按鈕） */
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .image-wrapper {
+            width: 100%;
+            height: 200px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 3px solid #FFE082;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Google Map 按鈕 */
+        .map-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: #FFFFFF;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 0 #2E7D32;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .map-btn:hover {
+            background-color: #43A047;
+        }
+
+        .map-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #2E7D32;
+        }
+
+        /* 大抽籤按鈕 */
+        .draw-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: #FFB300;
+            color: #5D4037;
+            font-size: 1.4rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #FB8C00;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .draw-btn:hover {
+            background-color: #FFC107;
+        }
+
+        .draw-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #FB8C00;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="card">
+        <h1 id="main-title" class="title">今天吃什麼？</h1>
+
+        <div id="result-container" class="result-container hidden">
+            <div class="image-wrapper">
+                <img id="food-image" src="" alt="美食照片">
+            </div>
+            <a id="map-btn" class="map-btn" href="#" target="_blank" rel="noopener noreferrer">
+                📍 馬上出發 (Google Map)
+            </a>
+        </div>
+
+        <button id="draw-btn" class="draw-btn">點我抽籤 🎲</button>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 餐廳資料庫：包含名稱、免費網路圖片連結、Google Map 搜尋連結
+            const foodList = [
+                {
+                    name: "鴨肉飯 🦆",
+                    image: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop",
+                    mapUrl: "https://www.google.com/maps/search/?api=1&query=鴨肉飯"
+                },
+                {
+                    name: "深水食堂 🍱",
+                    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=600&auto=format&fit=crop",
+                    mapUrl: "https://www.google.com/maps/search/?api=1&query=深水食堂"
+                },
+                {
+                    name: "THE-T-cafe ☕",
+                    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop",
+                    mapUrl: "https://www.google.com/maps/search/?api=1&query=THE-T-cafe"
+                },
+                {
+                    name: "栗の鍋 🍲",
+                    image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=600&auto=format&fit=crop",
+                    mapUrl: "https://www.google.com/maps/search/?api=1&query=栗の鍋"
+                },
+                {
+                    name: "越南河粉 🍜",
+                    image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=600&auto=format&fit=crop",
+                    mapUrl: "https://www.google.com/maps/search/?api=1&query=越南河粉"
+                }
+            ];
+
+            const titleElement = document.getElementById('main-title');
+            const drawBtn = document.getElementById('draw-btn');
+            const resultContainer = document.getElementById('result-container');
+            const foodImage = document.getElementById('food-image');
+            const mapBtn = document.getElementById

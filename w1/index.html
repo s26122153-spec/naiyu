@@ -1,128 +1,142 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>個人數位名片</title>
-    <style>
-        /* 全域設定：清除預設邊距與設定字體 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>個人數位名片</title>
+<!-- 引入 FontAwesome 圖示庫（用於 IG 與 Email 圖示） -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        /* 頁面背景：淡燕麥奶色，並將名片完全垂直水平置中 */
-        body {
-            background-color: #f7f3ef;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+<style>
+/* ---------------- Global Reset & Typography ---------------- */
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
 
-        /* 名片主體容器 */
-        .card {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 350px;
-            padding: 40px 30px;
-            border-radius: 20px;
-            text-align: center;
-            /* 現代感微陰影 */
-            box-shadow: 0 10px 30px rgba(180, 160, 140, 0.15);
-            transition: transform 0.3s ease;
-        }
+/* 4. 整體置中與黑白灰漸層背景 */
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%); /* 淺灰漸層 */
+display: flex;
+justify-content: center; /* 水平置中 */
+align-items: center; /* 垂直置中 */
+min-height: 100vh;
+padding: 20px;
+}
 
-        /* 滑鼠懸停名片時微浮起效果 */
-        .card:hover {
-            transform: translateY(-5px);
-        }
+/* 4. 現代感卡片與立體陰影 */
+.card {
+background-color: #ffffff;
+width: 100%;
+max-width: 360px; /* 限制名片最大寬度 */
+padding: 40px 30px;
+border-radius: 24px; /* 大圓角增加現代質感 */
+text-align: center;
+/* 多層次柔和陰影 */
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08),
+0 5px 15px rgba(0, 0, 0, 0.04);
+transition: transform 0.3s ease;
+}
 
-        /* 1. 圓形大頭貼照片 */
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 20px;
-            border: 4px solid #ede3da; /* 淡淡奶茶色外框 */
-        }
+/* 1. 圓形大頭貼照片 */
+.avatar {
+width: 110px;
+height: 110px;
+border-radius: 50%; /* 50% 完美圓形 */
+object-fit: cover;
+margin-bottom: 20px;
+border: 3px solid #f0f0f0; /* 細微淺灰邊框 */
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 頭像立體陰影 */
+}
 
-        /* 2. 名字 */
-        .name {
-            font-size: 24px;
-            color: #4a3e3d; /* 深褐棕色 */
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
+/* 2. 名字與一行簡短自我介紹 */
+.name {
+font-size: 22px;
+font-weight: 700;
+color: #1a1a1a; /* 深灰近黑 */
+letter-spacing: 1px;
+margin-bottom: 8px;
+}
 
-        /* 2. 自我介紹 */
-        .bio {
-            font-size: 14px;
-            color: #8c7b75; /* 溫柔奶茶灰 */
-            line-height: 1.5;
-            margin-bottom: 30px;
-        }
+.bio {
+font-size: 13px;
+color: #666666; /* 中灰色 */
+line-height: 1.6;
+margin-bottom: 30px;
+}
 
-        /* 3. 按鈕區塊 */
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+/* 3. 下方兩個按鈕區塊 */
+.btn-group {
+display: flex;
+flex-direction: column; /* 垂直排列 */
+gap: 12px;
+}
 
-        /* 按鈕通用基礎樣式 */
-        .btn {
-            display: block;
-            padding: 12px 20px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
+.btn {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+padding: 14px 20px;
+border-radius: 12px;
+font-size: 14px;
+font-weight: 600;
+text-decoration: none; /* 去除底線 */
+letter-spacing: 0.5px;
+transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
 
-        /* Instagram 按鈕：經典奶茶色 */
-        .btn-ig {
-            background-color: #c4a482;
-            color: #ffffff;
-        }
+/* Instagram 按鈕：純黑高對比 */
+.btn-instagram {
+background-color: #1a1a1a;
+color: #ffffff;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
-        .btn-ig:hover {
-            background-color: #b39270;
-        }
+.btn-instagram:hover {
+background-color: #333333;
+transform: translateY(-2px);
+box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
 
-        /* Email 按鈕：淺奶茶色 */
-        .btn-email {
-            background-color: #f2e9e1;
-            color: #6e5d54;
-        }
+/* Email 按鈕：白底黑框質感 */
+.btn-email {
+background-color: #ffffff;
+color: #1a1a1a;
+border: 1.5px solid #e0e0e0;
+}
 
-        .btn-email:hover {
-            background-color: #e5d8cc;
-        }
-    </style>
+.btn-email:hover {
+background-color: #f8f8f8;
+border-color: #1a1a1a;
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+</style>
 </head>
 <body>
 
-    <!-- 名片主要內容區塊 -->
-    <div class="card">
-        <!-- 1. 大頭貼 (可更換照片網址) -->
-        <img src="https://picsum.photos/200" alt="大頭貼" class="avatar">
-        
-        <!-- 2. 名字與簡介 -->
-        <h1 class="name">許乃玉</h1>
-        <p class="bio">一名熱愛生活與視覺美學的 UI/UX 設計新手 🎨</p>
-        
-        <!-- 3. 按鈕 -->
-        <div class="button-group">
-            <a href="#" class="btn btn-ig" target="_blank">Instagram</a>
-            <a href="mailto:your_email@example.com" class="btn btn-email">Email Me</a>
-        </div>
-    </div>
+<!-- 名片容器 -->
+<div class="card">
+<!-- 1. 圓形大頭貼 -->
+<img src="https://picsum.photos/200?grayscale" alt="個人大頭貼" class="avatar">
+
+<!-- 2. 名字與簡短自我介紹 -->
+<h1 class="name">劉玉恩</h1>
+<p class="bio">追求極簡美學與極致體驗的視覺創作者。</p>
+
+<!-- 3. Instagram 與 Email 按鈕 -->
+<div class="btn-group">
+<a href="https://www.instagram.com/naiyu_1002?dlrf=bGR5dHdhN3A4ajB5&utm_source=qr" target="_blank" class="btn btn-instagram">
+<i class="fab fa-instagram"></i> Instagram
+</a>
+<a href="mailto:s26122118@stu.edu.tw" class="btn btn-email">
+<i class="fas fa-envelope"></i> Email
+</a>
+</div>
+</div>
 
 </body>
 </html>

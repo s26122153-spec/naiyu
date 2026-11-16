@@ -1,39 +1,42 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>雲端心電感應 (多人默契遊戲)</title>
+    <title>雲端心電感應 (奶咖限定版)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        space: {
-                            900: '#070913',
-                            800: '#0d1127',
-                            700: '#181f3d',
-                            600: '#263159',
+                        latte: {
+                            50: '#FDFBF8',   // 奶泡極淺白
+                            100: '#F9F6F2',  // 燕麥奶背景
+                            200: '#EFE8DF',  // 溫潤拿鐵底色
+                            300: '#E2D6C7',  // 淺卡其邊框
+                            400: '#CBB8A3',  // 榛果奶咖
+                            500: '#A68A71',  // 經典奶咖
+                            600: '#856850',  // 烘焙中咖
+                            700: '#5E4636',  // 摩卡深棕
+                            800: '#3E2D22',  // 濃縮咖啡字體色
+                            900: '#2A1D15',  // 黑咖啡
                         },
-                        silver: {
-                            100: '#f8fafc',
-                            300: '#cbd5e1',
-                            400: '#94a3b8',
-                            500: '#64748b',
+                        caramel: {
+                            DEFAULT: '#B87A4B',
+                            light: '#D49A6A',
+                            dark: '#965F36',
                         },
-                        neon: {
-                            cyan: '#00f3ff',
-                            purple: '#b026ff',
-                            pink: '#ff007f'
+                        matcha: {
+                            DEFAULT: '#6B8E78',
+                            light: '#EBF2ED',
                         }
                     },
                     boxShadow: {
-                        'silver-glow': '0 0 20px rgba(203, 213, 225, 0.25)',
-                        'cyan-glow': '0 0 25px rgba(0, 243, 255, 0.4)',
-                        'purple-glow': '0 0 25px rgba(176, 38, 255, 0.4)',
+                        'latte-soft': '0 10px 30px -5px rgba(94, 70, 54, 0.08)',
+                        'latte-card': '0 4px 20px rgba(133, 104, 80, 0.12)',
+                        'caramel-glow': '0 6px 20px rgba(184, 122, 75, 0.28)',
                     }
                 }
             }
@@ -43,22 +46,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom 3D & CSS Styles -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #070913;
-            color: #f8fafc;
+            background-color: #F9F6F2;
+            color: #3E2D22;
             overflow-x: hidden;
             background-image:
-                radial-gradient(circle at 15% 20%, rgba(0, 243, 255, 0.08) 0%, transparent 45%),
-                radial-gradient(circle at 85% 80%, rgba(176, 38, 255, 0.08) 0%, transparent 45%),
-                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.6) 0%, rgba(7, 9, 19, 1) 100%);
+                radial-gradient(circle at 12% 18%, rgba(212, 154, 106, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 88% 82%, rgba(166, 138, 113, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(253, 251, 248, 0.8) 0%, rgba(249, 246, 242, 1) 100%);
             background-attachment: fixed;
         }
 
-        .font-orbitron {
-            font-family: 'Orbitron', sans-serif;
+        .font-display {
+            font-family: 'Quicksand', 'Noto Sans TC', sans-serif;
         }
 
         /* 3D Card Flip CSS */
@@ -76,619 +79,18 @@
             transform: rotateY(180deg);
         }
 
-        /* Silver Gradient Background & Borders */
-        .silver-border {
-            border: 1px solid rgba(203, 213, 225, 0.25);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+        /* Milk Coffee Glass & Borders */
+        .latte-panel {
+            border: 1px solid rgba(203, 184, 163, 0.55);
+            background: rgba(253, 251, 248, 0.85);
             backdrop-filter: blur(12px);
         }
 
-        .silver-text {
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+        .latte-title {
+            background: linear-gradient(135deg, #3E2D22 0%, #856850 60%, #B87A4B 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .silver-button {
-            background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
-            border: 1px solid rgba(203, 213, 225, 0.4);
-            transition: all 0.3s ease;
-        }
-        .silver-button:hover {
-            border-color: rgba(0, 243, 255, 0.8);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-            transform: translateY(-1px);
-        }
-
-        /* Starry Background Particles */
-        .star {
-            position: absolute;
-            background-color: white;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: blink 3s infinite ease-in-out;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 0.8; transform: scale(1.2); }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #070913;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00f3ff;
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col justify-between relative selection:bg-neon-cyan selection:text-space-900">
-
-    <!-- Background Animated Stars (Dynamic JS target) -->
-    <div id="stars-container" class="fixed inset-0 pointer-events-none z-0"></div>
-
-    <!-- Header / Navbar -->
-    <header class="relative z-10 w-full border-b border-slate-800 bg-space-900/80 backdrop-blur-md px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full silver-border flex items-center justify-center text-neon-cyan shadow-cyan-glow">
-                <i class="fa-solid font-orbitron fa-brain text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold tracking-wider silver-text font-orbitron">TELEPATHY 3D</h1>
-                <p class="text-xs text-slate-400">雲端心電感應 ‧ 多人默契試煉</p>
-            </div>
-        </div>
-
-        <!-- System Controls & Secret Host Trigger -->
-        <div class="flex items-center gap-3">
-            <!-- Room Info Tag -->
-            <div id="nav-room-badge" class="hidden text-xs px-3 py-1.5 rounded-full silver-border font-orbitron text-cyan-300 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>ROOM: <strong id="current-room-display">----</strong></span>
-            </div>
-
-            <!-- Secret Host Toggle Icon -->
-            <button id="secret-host-btn" onclick="toggleHostConsolePanel()" title="連擊或點擊開啟隱藏房主控制台"
-                class="w-9 h-9 rounded-full silver-border flex items-center justify-center text-slate-400 hover:text-neon-cyan transition duration-300 relative">
-                <i class="fa-solid fa-user-gear text-sm"></i>
-                <span id="host-indicator" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-neon-purple rounded-full border-2 border-space-900"></span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="relative z-10 flex-grow container mx-auto px-4 py-6 max-w-5xl">
-
-        <!-- Notification Toast / Alert System (No alert() used) -->
-        <div id="toast-container" class="fixed top-16 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-        <!-- SECTION 1: Lobby / Login Page -->
-        <section id="lobby-section" class="max-w-md mx-auto my-8">
-            <div class="silver-border rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-                <div class="absolute -top-12 -right-12 w-32 h-32 bg-neon-cyan/10 rounded-full blur-2xl"></div>
-                <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-neon-purple/10 rounded-full blur-2xl"></div>
-
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold tracking-wider silver-text">連線至心電感應網路</h2>
-                    <p class="text-sm text-slate-400 mt-1">輸入您的奶咖代號與分流房間碼</p>
-                </div>
-
-                <form id="login-form" onsubmit="handleJoinGame(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">玩家名稱 (Player Name)</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500"></i>
-                            <input type="text" id="input-player-name" required placeholder="請輸入暱稱..."
-                                class="w-full bg-space-800/80 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan transition">
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="block text-xs font-semibold text-slate-300">房間代碼 (Room ID)</label>
-                            <button type="button" onclick="generateRandomRoom()" class="text-xs text-neon-cyan hover:underline flex items-center gap-1">
-                                <i class="fa-solid fa-dice"></i> 隨機房號
-                            </button>
-                        </div>
-                        <div class="relative">
-                            <i class="fa-solid fa-hashtag absolute left-3.5 top-3.5 text-slate-500"></i>
-                            <input type="text" id="input-room-id" required placeholder="例如: 8888 或自訂號碼"
-                                class="w-full bg-space-800/80 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm font-orbitron uppercase tracking-widest focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan transition">
-                        </div>
-                    </div>
-
-                    <!-- Hidden Host Identity Checkbox -->
-                    <div class="pt-2">
-                        <label class="flex items-center gap-2 cursor-pointer group">
-                            <input type="checkbox" id="check-is-host" class="w-4 h-4 rounded bg-space-800 border-slate-700 text-neon-purple focus:ring-neon-purple focus:ring-offset-space-900">
-                            <span class="text-xs text-slate-400 group-hover:text-slate-200 transition">啟用「房主權限」 (具備出題/開牌面板)</span>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="w-full mt-4 py-3 rounded-xl silver-button text-slate-100 font-bold tracking-wide shadow-cyan-glow flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-rocket text-neon-cyan"></i> 登入房間 / 進入試煉
-                    </button>
-                </form>
-            </div>
-        </section>
-
-        <!-- SECTION 2: Game Room Interface (Hidden by default) -->
-        <section id="game-section" class="hidden space-y-6">
-
-            <!-- Host Controls Drawer/Panel (Collapsible / Dynamic) -->
-            <div id="host-panel" class="hidden silver-border rounded-2xl p-5 border-l-4 border-l-neon-purple bg-space-800/40 relative">
-                <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-crown text-neon-purple text-lg"></i>
-                        <h3 class="font-bold text-slate-100 font-orbitron tracking-wide">隱藏房主控制台 (Host Controls)</h3>
-                    </div>
-                    <span class="text-xs bg-neon-purple/20 text-neon-purple px-2.5 py-1 rounded-full border border-neon-purple/30">僅房主可見</span>
-                </div>
-
-                <!-- Host Action Form -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-xs text-slate-400 mb-1">設定默契題目 (Set Question)</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="host-question-input" placeholder="例如: 提到紅色會想到什麼水果？"
-                                class="flex-grow bg-space-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-neon-purple">
-                            <button onclick="hostSetQuestion()" class="px-4 py-2 rounded-xl bg-neon-purple/80 hover:bg-neon-purple text-white text-sm font-semibold transition flex items-center gap-1.5 shrink-0 shadow-purple-glow">
-                                <i class="fa-solid fa-paper-plane"></i> 出題開始
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-end gap-2">
-                        <button onclick="hostRevealAnswers()" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600/80 hover:bg-emerald-500 text-white text-sm font-semibold transition flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-eye"></i> 翻牌開牌
-                        </button>
-                        <button onclick="hostResetGame()" class="py-2 px-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-semibold transition flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-rotate-left"></i> 洗牌重置
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Current Room Status Header -->
-            <div class="silver-border rounded-2xl p-6 text-center relative overflow-hidden">
-                <div class="flex justify-between items-center text-xs text-slate-400 mb-2">
-                    <span id="player-identity-badge" class="font-semibold text-slate-300">玩家: --</span>
-                    <span id="polling-status font-orbitron" class="flex items-center gap-1.5 text-slate-400">
-                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                        星際脈衝同步中 (<span id="last-poll-time">--:--:--</span>)
-                    </span>
-                </div>
-
-                <!-- Question Display -->
-                <div class="my-3">
-                    <span class="text-xs uppercase tracking-widest text-neon-cyan font-orbitron">CURRENT QUESTION</span>
-                    <h2 id="display-question" class="text-2xl sm:text-3xl font-extrabold text-white mt-1 min-h-[40px] flex items-center justify-center">
-                        <span class="text-slate-500 font-normal italic text-lg">等待房主出題中...</span>
-                    </h2>
-                </div>
-
-                <!-- Status Progress Message -->
-                <div id="game-status-banner" class="inline-block mt-2 px-4 py-1 rounded-full text-xs font-semibold bg-space-800 text-slate-300 border border-slate-700">
-                    狀態: 等待中 (Setup)
-                </div>
-            </div>
-
-            <!-- SECTION: Player Input Box (Visible during 'playing' status) -->
-            <div id="answer-input-box" class="silver-border rounded-2xl p-5 bg-space-800/50 max-w-xl mx-auto transition-all">
-                <h4 class="text-sm font-semibold text-slate-200 mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-pen-nib text-neon-cyan"></i> 填寫您的心電感應答案
-                </h4>
-                <div class="flex gap-2">
-                    <input type="text" id="player-answer-input" placeholder="請輸入答案..."
-                        class="flex-grow bg-space-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neon-cyan text-white">
-                    <button onclick="submitMyAnswer()" class="px-5 py-2.5 rounded-xl silver-button text-cyan-300 font-bold text-sm shrink-0 flex items-center gap-2 shadow-cyan-glow">
-                        <i class="fa-solid fa-paper-plane"></i> 送出答案
-                    </button>
-                </div>
-                <p id="my-answer-status" class="text-xs text-slate-400 mt-2 text-right">尚未送出答案</p>
-            </div>
-
-            <!-- SECTION: Card Deck Grid (3D Flip Display Area) -->
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-base font-bold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-clone text-neon-purple"></i>
-                        感應卡牌矩陣 (<span id="cards-count">0</span> 人)
-                    </h3>
-                    <span class="text-xs text-slate-400">當房主開牌時，全網頁同步觸發 3D 動畫</span>
-                </div>
-
-                <!-- Match Stats Banner (Visible after reveal) -->
-                <div id="match-stats-container" class="hidden mb-6 silver-border rounded-xl p-4 bg-gradient-to-r from-space-800 via-space-700 to-space-800">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-neon-purple/20 border border-neon-purple flex items-center justify-center text-neon-purple text-lg">
-                            <i class="fa-solid fa-bullseye"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-white">默契共振分析結果</h4>
-                            <p id="match-stats-text" class="text-xs text-slate-300 mt-0.5">讀取中...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dynamic Grid for 3D Cards -->
-                <div id="cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    <!-- Cards will be populated here dynamically -->
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="relative z-10 border-t border-slate-800 bg-space-900/90 py-4 text-center text-xs text-slate-500 font-orbitron">
-        <p>TELEPATHY ENGINE &copy; 2026 ‧ POWERED BY GOOGLE APPS SCRIPT</p>
-    </footer>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // --- CONSTANTS & CONFIG ---
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzNg--O9F9tsCyCehAbiftckgMCIVelwv3j5C2zJLD04PtCiv4Xri-4dJgEtz9y9TrR/exec";
-        const SHEET_NAME = 'TelepathyData';
-        const POLLING_INTERVAL = 2500; // 2.5 seconds polling
-
-        // --- GLOBAL APP STATE ---
-        let currentRoom = "";
-        let playerName = "";
-        let isHost = false;
-        let pollingTimer = null;
-        let lastGameState = {
-            status: "setup",
-            question: "",
-            answers: {}
-        };
-
-        // --- INIT & UTILS ---
-        window.onload = function() {
-            createStarfield();
-           
-            // Check URL parameters for direct room join (e.g. ?room=1234)
-            const urlParams = new URLSearchParams(window.location.search);
-            const roomParam = urlParams.get('room');
-            if (roomParam) {
-                document.getElementById('input-room-id').value = roomParam;
-            }
-        };
-
-        // Generate dynamic stars background
-        function createStarfield() {
-            const container = document.getElementById('stars-container');
-            const starCount = 60;
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.width = `${Math.random() * 3 + 1}px`;
-                star.style.height = star.style.width;
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.animationDelay = `${Math.random() * 3}s`;
-                container.appendChild(star);
-            }
-        }
-
-        // Generate 6 digit random room code
-        function generateRandomRoom() {
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('input-room-id').value = code;
-            showToast("已產生隨機房間號: " + code, "info");
-        }
-
-        // Custom Notification Toast (Replaces alert)
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-           
-            let bgStyle = 'bg-space-800 border-slate-700 text-slate-100';
-            if (type === 'success') bgStyle = 'bg-emerald-950/90 border-emerald-500 text-emerald-200';
-            if (type === 'error') bgStyle = 'bg-rose-950/90 border-rose-500 text-rose-200';
-            if (type === 'purple') bgStyle = 'bg-purple-950/90 border-neon-purple text-purple-200';
-
-            toast.className = `px-4 py-3 rounded-xl border ${bgStyle} backdrop-blur-md shadow-lg text-xs sm:text-sm font-medium flex items-center gap-2 transform transition-all duration-300 translate-x-10 opacity-0 pointer-events-auto`;
-            toast.innerHTML = `
-                <i class="fa-solid ${type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info'} text-neon-cyan"></i>
-                <span>${message}</span>
-            `;
-
-            container.appendChild(toast);
-           
-            // Trigger animation
-            setTimeout(() => {
-                toast.classList.remove('translate-x-10', 'opacity-0');
-            }, 50);
-
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-x-10');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        // --- GAME LOGIN & ROOM JOINING ---
-        function handleJoinGame(e) {
-            e.preventDefault();
-            const nameInput = document.getElementById('input-player-name').value.trim();
-            const roomInput = document.getElementById('input-room-id').value.trim().toUpperCase();
-            const hostCheck = document.getElementById('check-is-host').checked;
-
-            if (!nameInput || !roomInput) {
-                showToast("請填寫名字與房間代碼", "error");
-                return;
-            }
-
-            playerName = nameInput;
-            currentRoom = roomInput;
-            isHost = hostCheck;
-
-            // Update UI State
-            document.getElementById('current-room-display').innerText = currentRoom;
-            document.getElementById('nav-room-badge').classList.remove('hidden');
-            document.getElementById('player-identity-badge').innerText = `玩家: ${playerName} ${isHost ? '(房主)' : ''}`;
-
-            if (isHost) {
-                document.getElementById('host-panel').classList.remove('hidden');
-                document.getElementById('host-indicator').classList.remove('hidden');
-            }
-
-            // Switch Sections
-            document.getElementById('lobby-section').classList.add('hidden');
-            document.getElementById('game-section').classList.remove('hidden');
-
-            showToast(`已成功登入房間 [${currentRoom}]`, "success");
-
-            // Fetch initial state & Start Polling loop
-            fetchGameState();
-            startPolling();
-        }
-
-        // Secret Toggle Host Panel Button
-        function toggleHostConsolePanel() {
-            const panel = document.getElementById('host-panel');
-            if (panel.classList.contains('hidden')) {
-                panel.classList.remove('hidden');
-                document.getElementById('host-indicator').classList.remove('hidden');
-                showToast("已開啟房主控制台", "purple");
-            } else {
-                panel.classList.add('hidden');
-                document.getElementById('host-indicator').classList.add('hidden');
-                showToast("已隱藏房主控制台", "info");
-            }
-        }
-
-        // --- GAS API INTERACTION (GET / POST) ---
-
-        // Start 2.5s interval polling loop
-        function startPolling() {
-            if (pollingTimer) clearInterval(pollingTimer);
-            pollingTimer = setInterval(fetchGameState, POLLING_INTERVAL);
-        }
-
-        // Fetch latest state via GET
-        async function fetchGameState() {
-            if (!currentRoom) return;
-
-            try {
-                const response = await fetch(`${GAS_API_URL}?room=${encodeURIComponent(currentRoom)}`);
-                if (!response.ok) throw new Error("Network response error");
-               
-                const data = await response.json();
-               
-                // Update time display
-                const now = new Date();
-                document.getElementById('last-poll-time').innerText = now.toTimeString().split(' ')[0];
-
-                // Render state updates
-                renderGameUI(data);
-
-            } catch (err) {
-                console.error("Polling error:", err);
-            }
-        }
-
-        // Send actions to GAS via POST
-        async function sendApiPost(action, payload = {}) {
-            const bodyData = {
-                room: currentRoom,
-                action: action,
-                ...payload
-            };
-
-            try {
-                // Using text/plain to prevent CORS preflight blockage in GAS
-                const response = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify(bodyData)
-                });
-
-                const resJson = await response.json();
-                if (resJson.success) {
-                    // Immediately refresh state
-                    fetchGameState();
-                } else {
-                    showToast("操作失敗，請重新再試", "error");
-                }
-            } catch (err) {
-                console.error("POST API Error:", err);
-                showToast("連線發生異常", "error");
-            }
-        }
-
-        // --- HOST ACTIONS ---
-        function hostSetQuestion() {
-            const q = document.getElementById('host-question-input').value.trim();
-            if (!q) {
-                showToast("請輸入題目內容", "error");
-                return;
-            }
-            sendApiPost("set_question", { question: q });
-            showToast("題目已發送！遊戲開始", "success");
-        }
-
-        function hostRevealAnswers() {
-            sendApiPost("reveal");
-            showToast("指令已發送：翻牌開牌！", "purple");
-        }
-
-        function hostResetGame() {
-            sendApiPost("reset");
-            document.getElementById('host-question-input').value = "";
-            showToast("房間已重置", "info");
-        }
-
-        // --- PLAYER ACTIONS ---
-        function submitMyAnswer() {
-            const ans = document.getElementById('player-answer-input').value.trim();
-            if (!ans) {
-                showToast("請輸入答案後再送出", "error");
-                return;
-            }
-            sendApiPost("submit_answer", { playerName: playerName, answer: ans });
-            document.getElementById('my-answer-status').innerText = `已送出答案: "${ans}"`;
-            document.getElementById('my-answer-status').className = "text-xs text-emerald-400 mt-2 text-right";
-            showToast("答案已成功同步至雲端！", "success");
-        }
-
-        // --- UI RENDER & 3D FLIP LOGIC ---
-        function renderGameUI(data) {
-            const { status, question, answers } = data;
-           
-            // Check status change
-            const isStatusChanged = lastGameState.status !== status;
-            lastGameState = data;
-
-            // 1. Render Question & Banner
-            const qDisplay = document.getElementById('display-question');
-            const statusBanner = document.getElementById('game-status-banner');
-            const answerBox = document.getElementById('answer-input-box');
-
-            if (status === 'setup') {
-                qDisplay.innerHTML = `<span class="text-slate-500 font-normal italic text-base sm:text-lg">等待房主出題中...</span>`;
-                statusBanner.innerText = "狀態: 籌備中 (Setup)";
-                statusBanner.className = "inline-block mt-2 px-4 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700";
-                answerBox.classList.add('hidden');
-            } else if (status === 'playing') {
-                qDisplay.innerText = question || "（無題目）";
-                statusBanner.innerText = "狀態: 玩家填答中 (Playing)";
-                statusBanner.className = "inline-block mt-2 px-4 py-1 rounded-full text-xs font-semibold bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/40 animate-pulse";
-                answerBox.classList.remove('hidden');
-            } else if (status === 'revealed') {
-                qDisplay.innerText = question || "（無題目）";
-                statusBanner.innerText = "狀態: 已揭曉開牌 (Revealed)";
-                statusBanner.className = "inline-block mt-2 px-4 py-1 rounded-full text-xs font-semibold bg-neon-purple/20 text-neon-purple border border-neon-purple/40";
-                answerBox.classList.add('hidden');
-            }
-
-            // 2. Render Cards Grid
-            const cardsGrid = document.getElementById('cards-grid');
-            const playerNames = Object.keys(answers || {});
-            document.getElementById('cards-count').innerText = playerNames.length;
-
-            if (playerNames.length === 0) {
-                cardsGrid.innerHTML = `
-                    <div class="col-span-full py-12 text-center text-slate-500 text-sm silver-border rounded-xl">
-                        <i class="fa-solid fa-users-slash text-2xl mb-2 block text-slate-600"></i>
-                        目前尚無玩家送出答案...
-                    </div>
-                `;
-                document.getElementById('match-stats-container').classList.add('hidden');
-                return;
-            }
-
-            // Build card element structure
-            cardsGrid.innerHTML = "";
-            playerNames.forEach(pName => {
-                const answerText = answers[pName];
-                const isRevealed = (status === 'revealed');
-               
-                const cardWrapper = document.createElement('div');
-                cardWrapper.className = "perspective-1000 h-44 w-full";
-               
-                cardWrapper.innerHTML = `
-                    <div class="card-inner relative w-full h-full duration-700 transform-style-3d transition-transform ${isRevealed ? 'rotate-y-180' : ''}">
-                       
-                        <!-- CARD FRONT (Hidden Answer Side) -->
-                        <div class="absolute inset-0 w-full h-full rounded-2xl silver-border p-4 flex flex-col justify-between bg-gradient-to-br from-space-800 to-space-900 backface-hidden shadow-lg border border-slate-700">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-slate-300 font-orbitron truncate max-w-[100px]">${pName}</span>
-                                <i class="fa-solid fa-atom text-neon-cyan text-xs"></i>
-                            </div>
-                            <div class="text-center my-auto">
-                                <div class="w-12 h-12 mx-auto rounded-full bg-space-700/60 border border-slate-600 flex items-center justify-center text-slate-400">
-                                    <i class="fa-solid fa-lock text-lg"></i>
-                                </div>
-                                <p class="text-[11px] text-slate-400 mt-2">答案加密中</p>
-                            </div>
-                            <div class="text-[10px] text-slate-500 text-right font-orbitron">READY</div>
-                        </div>
-
-                        <!-- CARD BACK (Revealed Answer Side) -->
-                        <div class="absolute inset-0 w-full h-full rounded-2xl silver-border p-4 flex flex-col justify-between bg-gradient-to-br from-space-700 via-space-800 to-space-900 rotate-y-180 backface-hidden shadow-cyan-glow border border-neon-cyan/50">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-neon-cyan font-orbitron truncate max-w-[100px]">${pName}</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded bg-neon-purple/30 text-purple-200 border border-neon-purple/40">已揭示</span>
-                            </div>
-                            <div class="text-center my-auto px-1">
-                                <h4 class="text-lg font-extrabold text-white tracking-wide break-words">${answerText}</h4>
-                            </div>
-                            <div class="text-[10px] text-slate-400 text-right font-orbitron">MATCH SIGNAL</div>
-                        </div>
-
-                    </div>
-                `;
-                cardsGrid.appendChild(cardWrapper);
-            });
-
-            // 3. Match Statistics Calculation (If revealed)
-            if (status === 'revealed' && playerNames.length > 0) {
-                calculateMatchStats(answers);
-            } else {
-                document.getElementById('match-stats-container').classList.add('hidden');
-            }
-        }
-
-        // Calculate answer similarity / agreement rate
-        function calculateMatchStats(answers) {
-            const counts = {};
-            const list = Object.values(answers);
-           
-            list.forEach(ans => {
-                const cleaned = ans.trim().toLowerCase();
-                counts[cleaned] = (counts[cleaned] || 0) + 1;
-            });
-
-            let maxMatchCount = 0;
-            let topAnswer = "";
-
-            for (const [ans, count] of Object.entries(counts)) {
-                if (count > maxMatchCount) {
-                    maxMatchCount = count;
-                    topAnswer = ans;
-                }
-            }
-
-            const matchPercentage = Math.round((maxMatchCount / list.length) * 100);
-            const container = document.getElementById('match-stats-container');
-            const statsText = document.getElementById('match-stats-text');
-
-            container.classList.remove('hidden');
-            statsText.innerHTML = `
-                最高默契共振解答為 「<strong class="text-neon-cyan">${topAnswer}</strong>」，
-                共有 <strong>${maxMatchCount}</strong> 位玩家選擇（默契同步率 <strong class="text-neon-purple">${matchPercentage}%</strong>）！
-            `;
-        }
-    </script>
-</body>
-</html>
+        .caramel-button {
+            background: linear-gradient(135deg, #B87A4B 0%,
